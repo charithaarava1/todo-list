@@ -1,0 +1,141 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart To-Do List</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #a8edea, #fed6e3);
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .input-section {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #5cb85c;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #4cae4c;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background: #f9f9f9;
+      margin-bottom: 10px;
+      padding: 12px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .completed {
+      text-decoration: line-through;
+      color: #888;
+    }
+    .deleteBtn {
+      background-color: #d9534f;
+      border: none;
+      padding: 6px 10px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .deleteBtn:hover {
+      background-color: #c9302c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>To-Do List</h1>
+    <div class="input-section">
+      <input type="text" id="taskInput" placeholder="Enter your task">
+      <button onclick="addTask()">Add</button>
+    </div>
+    <ul id="taskList"></ul>
+  </div>  <script>
+    let tasks = JSON.parse(localStorage.getItem("smartTasks")) || [];
+    renderTasks();
+
+    function addTask() {
+      const input = document.getElementById("taskInput");
+      const text = input.value.trim();
+      if (text) {
+        tasks.push({ text, completed: false });
+        input.value = "";
+        saveTasks();
+        renderTasks();
+      }
+    }
+
+    function renderTasks() {
+      const list = document.getElementById("taskList");
+      list.innerHTML = "";
+      tasks.forEach((task, i) => {
+        const li = document.createElement("li");
+        if (task.completed) li.classList.add("completed");
+
+        const span = document.createElement("span");
+        span.textContent = task.text;
+        span.style.cursor = "pointer";
+        span.onclick = () => toggleTask(i);
+
+        const btn = document.createElement("button");
+        btn.textContent = "Delete";
+        btn.className = "deleteBtn";
+        btn.onclick = () => deleteTask(i);
+
+        li.appendChild(span);
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+    }
+
+    function toggleTask(index) {
+      tasks[index].completed = !tasks[index].completed;
+      saveTasks();
+      renderTasks();
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      saveTasks();
+      renderTasks();
+    }
+
+    function saveTasks() {
+      localStorage.setItem("smartTasks", JSON.stringify(tasks));
+    }
+  </script></body>
+</html>
